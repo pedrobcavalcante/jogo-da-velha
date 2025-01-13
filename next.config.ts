@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  output: process.env.EXPORT_STATIC === "true" ? "export" : undefined,
   basePath: "/jogo-da-velha",
   trailingSlash: true,
 };

@@ -39,7 +39,8 @@ jobs:
 
       # 6. Build the project
       - name: Build Project
-        run: npm run build
+        run: |
+          EXPORT_STATIC=true npm run build
 
       # 7. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
