@@ -24,18 +24,24 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # 4. Update version (auto-increment patch version)
+      # 4. Configure Git User
+      - name: Configure Git User
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      # 5. Update version (auto-increment patch version)
       - name: Update Version
         run: |
           npm version patch --no-git-tag-version
           git add package.json package-lock.json
           git commit -m "ci: bump version [skip ci]"
 
-      # 5. Build the project
+      # 6. Build the project
       - name: Build Project
         run: npm run build
 
-      # 6. Deploy to GitHub Pages
+      # 7. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
