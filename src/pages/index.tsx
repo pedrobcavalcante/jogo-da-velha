@@ -1,5 +1,5 @@
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import Board from "../components/Board";
 
 type HomeProps = {
@@ -14,7 +14,7 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   );
 };
 
-export const getStaticProps : GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const initialSquares = Array(9).fill(null);
 
   return {
