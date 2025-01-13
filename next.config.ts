@@ -1,9 +1,8 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  experimental: {
-    externalDir: false,
-  },
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export",
+  basePath: "/jogo-da-velha",
+  trailingSlash: true,
 };
 
 export default nextConfig;
