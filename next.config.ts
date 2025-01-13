@@ -1,5 +1,5 @@
 const nextConfig = {
-
+  output: "export",
   basePath: "/jogo-da-velha",
   trailingSlash: true,
 };
