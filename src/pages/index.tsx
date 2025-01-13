@@ -14,8 +14,7 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // Inicializando o tabuleiro no servidor
+export const getStaticProps : GetServerSideProps = async () => {
   const initialSquares = Array(9).fill(null);
 
   return {

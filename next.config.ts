@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
   basePath: "/jogo-da-velha",
