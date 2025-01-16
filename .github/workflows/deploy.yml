@@ -24,7 +24,7 @@ jobs:
 
       # Configurar variável de ambiente para o caminho base
       - name: Set BASE_PATH for GitHub Pages
-        run: echo "NEXT_PUBLIC_BASE_PATH=/todo-app-react" >> .env
+        run: echo "NEXT_PUBLIC_BASE_PATH=/jogo-da-velha" >> .env
 
       # Instalar dependências
       - name: Install dependencies
