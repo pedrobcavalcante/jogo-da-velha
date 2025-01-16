@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GetStaticProps } from "next";
 import Board from "../components/Board";
 
@@ -12,6 +12,7 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   const [squares, setSquares] = useState<(string | null)[]>(initialSquares);
   const [gameMode, setGameMode] = useState<GameMode>("human-vs-human");
   const [isCpuTurn, setIsCpuTurn] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   const resetGame = () => {
     setSquares(initialSquares);
@@ -19,22 +20,20 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   };
 
   const handleSquareClick = (index: number) => {
-    // Não faz nada se a célula já foi preenchida ou se for a vez da CPU
     if (squares[index] || isCpuTurn) return;
 
     const newSquares = [...squares];
-    newSquares[index] = "X"; // Jogador humano faz a marcação
+    newSquares[index] = "X";
 
     setSquares(newSquares);
 
     if (gameMode === "human-vs-cpu") {
-      setIsCpuTurn(true); // Agora é a vez da CPU
-      cpuPlay(newSquares); // Faz a jogada da CPU imediatamente
+      setIsCpuTurn(true);
+      cpuPlay(newSquares);
     }
   };
 
   const cpuPlay = (newSquares: (string | null)[]) => {
-    // A CPU faz a jogada automaticamente
     const availableIndexes = newSquares
       .map((value, index) => (value === null ? index : -1))
       .filter((index) => index !== -1);
@@ -42,11 +41,11 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
     if (availableIndexes.length > 0) {
       const randomIndex =
         availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-      newSquares[randomIndex] = "O"; // CPU marca com "O"
-      setSquares([...newSquares]); // Atualiza o estado com a jogada da CPU
+      newSquares[randomIndex] = "O";
+      setSquares([...newSquares]);
     }
 
-    setIsCpuTurn(false); // Fim do turno da CPU
+    setIsCpuTurn(false);
   };
 
   const handleGameModeChange = (mode: GameMode) => {
@@ -55,37 +54,28 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   };
 
   const toggleDarkMode = () => {
-    // Verifica se o modo escuro está ativado ou não
-    const darkMode = document.body.classList.contains("dark-mode");
-
-    if (darkMode) {
-      // Se estiver ativado, remove a classe e salva a mudança no localStorage
-      document.body.classList.remove("dark-mode");
-      localStorage.setItem("darkMode", "false");
-    } else {
-      // Se não estiver ativado, adiciona a classe e salva a mudança no localStorage
-      document.body.classList.add("dark-mode");
-      localStorage.setItem("darkMode", "true");
-    }
+    setIsDarkMode(!isDarkMode);
   };
 
-  React.useEffect(() => {
-    // Verifica se o modo escuro foi salvo no localStorage
+  useEffect(() => {
     const darkMode = localStorage.getItem("darkMode") === "true";
+    setIsDarkMode(darkMode);
+  }, []);
 
-    if (darkMode) {
+  useEffect(() => {
+    if (isDarkMode) {
       document.body.classList.add("dark-mode");
+      localStorage.setItem("darkMode", "true");
     } else {
       document.body.classList.remove("dark-mode");
+      localStorage.setItem("darkMode", "false");
     }
-  }, []);
+  }, [isDarkMode]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      {/* Título do Jogo */}
       <h1 style={{ fontSize: "3rem", marginBottom: "30px" }}>Jogo da Velha</h1>
 
-      {/* Botões para escolher o modo de jogo */}
       <div style={{ marginBottom: "20px" }}>
         <button
           onClick={() => handleGameModeChange("human-vs-human")}
@@ -101,25 +91,21 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
         </button>
       </div>
 
-      {/* Tabuleiro do jogo */}
       <div
         style={{ marginTop: "30px", display: "flex", justifyContent: "center" }}
       >
         <Board initialSquares={squares} onSquareClick={handleSquareClick} />
       </div>
 
-      {/* Botão para resetar o jogo */}
       <div style={{ marginTop: "20px" }}>
         <button onClick={resetGame} style={buttonStyle}>
           Resetar Jogo
         </button>
       </div>
 
-      {/* Botão para alternar entre modo claro e escuro */}
       <div style={{ marginTop: "20px" }}>
         <button onClick={toggleDarkMode} style={buttonStyle}>
-          Alternar para Modo{" "}
-          {document.body.classList.contains("dark-mode") ? "Claro" : "Escuro"}
+          Alternar para Modo {isDarkMode ? "Claro" : "Escuro"}
         </button>
       </div>
     </div>
