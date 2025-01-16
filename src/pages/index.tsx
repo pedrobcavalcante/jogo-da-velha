@@ -19,65 +19,124 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   };
 
   const handleSquareClick = (index: number) => {
+    // Não faz nada se a célula já foi preenchida ou se for a vez da CPU
     if (squares[index] || isCpuTurn) return;
 
     const newSquares = [...squares];
-    newSquares[index] = "X";
+    newSquares[index] = "X"; // Jogador humano faz a marcação
 
     setSquares(newSquares);
 
     if (gameMode === "human-vs-cpu") {
-      setIsCpuTurn(true);
+      setIsCpuTurn(true); // Agora é a vez da CPU
+      cpuPlay(newSquares); // Faz a jogada da CPU imediatamente
     }
   };
 
-  const cpuPlay = React.useCallback(() => {
-    const availableIndexes = squares
+  const cpuPlay = (newSquares: (string | null)[]) => {
+    // A CPU faz a jogada automaticamente
+    const availableIndexes = newSquares
       .map((value, index) => (value === null ? index : -1))
       .filter((index) => index !== -1);
 
     if (availableIndexes.length > 0) {
       const randomIndex =
         availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-      const newSquares = [...squares];
-      newSquares[randomIndex] = "O";
-      setSquares(newSquares);
+      newSquares[randomIndex] = "O"; // CPU marca com "O"
+      setSquares([...newSquares]); // Atualiza o estado com a jogada da CPU
     }
 
-    setIsCpuTurn(false);
-  }, [squares]);
+    setIsCpuTurn(false); // Fim do turno da CPU
+  };
 
   const handleGameModeChange = (mode: GameMode) => {
     setGameMode(mode);
     resetGame();
   };
 
-  React.useEffect(() => {
-    if (gameMode === "human-vs-cpu" && isCpuTurn) {
-      setTimeout(cpuPlay, 1);
+  const toggleDarkMode = () => {
+    // Verifica se o modo escuro está ativado ou não
+    const darkMode = document.body.classList.contains("dark-mode");
+
+    if (darkMode) {
+      // Se estiver ativado, remove a classe e salva a mudança no localStorage
+      document.body.classList.remove("dark-mode");
+      localStorage.setItem("darkMode", "false");
+    } else {
+      // Se não estiver ativado, adiciona a classe e salva a mudança no localStorage
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("darkMode", "true");
     }
-  }, [isCpuTurn, squares, gameMode, cpuPlay]);
+  };
+
+  React.useEffect(() => {
+    // Verifica se o modo escuro foi salvo no localStorage
+    const darkMode = localStorage.getItem("darkMode") === "true";
+
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, []);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Jogo da Velha</h1>
+      {/* Título do Jogo */}
+      <h1 style={{ fontSize: "3rem", marginBottom: "30px" }}>Jogo da Velha</h1>
 
-      <div>
-        <button onClick={() => handleGameModeChange("human-vs-human")}>
+      {/* Botões para escolher o modo de jogo */}
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          onClick={() => handleGameModeChange("human-vs-human")}
+          style={buttonStyle}
+        >
           Jogar contra outro jogador
         </button>
-        <button onClick={() => handleGameModeChange("human-vs-cpu")}>
+        <button
+          onClick={() => handleGameModeChange("human-vs-cpu")}
+          style={buttonStyle}
+        >
           Jogar contra a CPU
         </button>
       </div>
 
-      <Board initialSquares={squares} onSquareClick={handleSquareClick} />
+      {/* Tabuleiro do jogo */}
+      <div
+        style={{ marginTop: "30px", display: "flex", justifyContent: "center" }}
+      >
+        <Board initialSquares={squares} onSquareClick={handleSquareClick} />
+      </div>
 
-      <button onClick={resetGame} style={{ marginTop: "20px" }}>
-        Resetar Jogo
-      </button>
+      {/* Botão para resetar o jogo */}
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={resetGame} style={buttonStyle}>
+          Resetar Jogo
+        </button>
+      </div>
+
+      {/* Botão para alternar entre modo claro e escuro */}
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={toggleDarkMode} style={buttonStyle}>
+          Alternar para Modo{" "}
+          {document.body.classList.contains("dark-mode") ? "Claro" : "Escuro"}
+        </button>
+      </div>
     </div>
   );
+};
+
+const buttonStyle = {
+  backgroundColor: "#0070f3",
+  color: "#fff",
+  border: "none",
+  padding: "10px 20px",
+  margin: "5px",
+  fontSize: "1.1rem",
+  borderRadius: "5px",
+  cursor: "pointer",
+  transition: "background-color 0.3s ease",
+  width: "250px",
 };
 
 export const getStaticProps: GetStaticProps = async () => {
