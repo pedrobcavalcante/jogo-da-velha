@@ -58,3 +58,9 @@ h2 {
   background-color: #333;
   color: white;
 }
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
