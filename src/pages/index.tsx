@@ -129,6 +129,11 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
         alignItems: "center",
       }}
     >
+      {isGameOver && (
+        <div style={{ marginBottom: "20px" }}>
+          <h2>{winner === "Empate" ? "Empate!" : `${winner} venceu!`}</h2>
+        </div>
+      )}
       {showOverlay && (
         <div style={overlay}>
           <h1
@@ -165,7 +170,6 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
           </div>
         </div>
       )}
-
       <div
         style={{
           marginTop: "30px",
@@ -175,7 +179,6 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
       >
         <Board initialSquares={squares} onSquareClick={handleSquareClick} />
       </div>
-
       {isGameOver && (
         <div style={{ marginTop: "20px" }}>
           <button onClick={resetGame} style={buttonStyle}>
