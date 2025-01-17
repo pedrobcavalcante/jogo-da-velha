@@ -15,12 +15,14 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [winner, setWinner] = useState<string | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
 
   const resetGame = () => {
     setSquares(initialSquares);
     setIsCpuTurn(false);
     setIsGameOver(false);
     setWinner(null);
+    setCurrentPlayer("X");
   };
 
   const checkWinner = (newSquares: (string | null)[]) => {
@@ -48,7 +50,6 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
       }
     }
 
-    // Se não houver mais movimentos, o jogo empata
     if (newSquares.every((square) => square !== null)) {
       setWinner("Empate");
       setIsGameOver(true);
@@ -56,19 +57,20 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   };
 
   const handleSquareClick = (index: number) => {
-    if (squares[index] || isCpuTurn || isGameOver) return; // Bloqueia se já foi preenchido ou se o jogo terminou
+    if (squares[index] || isCpuTurn || isGameOver) return;
 
     const newSquares = [...squares];
-    newSquares[index] = "X"; // Jogador humano faz a marcação
+    newSquares[index] = currentPlayer;
 
     setSquares(newSquares);
+    checkWinner(newSquares);
 
-    if (gameMode === "human-vs-cpu") {
+    if (gameMode === "human-vs-human") {
+      setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+    } else if (gameMode === "human-vs-cpu") {
       setIsCpuTurn(true);
       cpuPlay(newSquares);
     }
-
-    checkWinner(newSquares); // Verifica o vencedor após cada jogada
   };
 
   const cpuPlay = (newSquares: (string | null)[]) => {
@@ -79,12 +81,12 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
     if (availableIndexes.length > 0) {
       const randomIndex =
         availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-      newSquares[randomIndex] = "O"; // CPU marca com "O"
+      newSquares[randomIndex] = "O";
       setSquares([...newSquares]);
     }
 
     setIsCpuTurn(false);
-    checkWinner(newSquares); // Verifica o vencedor após a jogada da CPU
+    checkWinner(newSquares);
   };
 
   const handleGameModeChange = (mode: GameMode) => {
@@ -113,17 +115,14 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      {/* Título do Jogo */}
       <h1 style={{ fontSize: "3rem", marginBottom: "30px" }}>Jogo da Velha</h1>
 
-      {/* Exibe o status do vencedor quando o jogo termina */}
       {isGameOver && (
         <div style={{ marginBottom: "20px" }}>
           <h2>{winner === "Empate" ? "Empate!" : `${winner} venceu!`}</h2>
         </div>
       )}
 
-      {/* Botões para escolher o modo de jogo */}
       {!isGameOver && (
         <div style={{ marginBottom: "20px" }}>
           <button
@@ -141,14 +140,12 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
         </div>
       )}
 
-      {/* Tabuleiro do jogo */}
       <div
         style={{ marginTop: "30px", display: "flex", justifyContent: "center" }}
       >
         <Board initialSquares={squares} onSquareClick={handleSquareClick} />
       </div>
 
-      {/* Botão para resetar o jogo */}
       {isGameOver && (
         <div style={{ marginTop: "20px" }}>
           <button onClick={resetGame} style={buttonStyle}>
@@ -157,7 +154,6 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
         </div>
       )}
 
-      {/* Botão para alternar entre modo claro e escuro, visível sempre */}
       <div style={{ marginTop: "20px" }}>
         <button onClick={toggleDarkMode} style={buttonStyle}>
           Alternar para Modo {isDarkMode ? "Claro" : "Escuro"}
