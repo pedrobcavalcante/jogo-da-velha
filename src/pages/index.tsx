@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GetStaticProps } from "next";
 import Board from "../components/Board";
-import { CSSProperties } from "react";
 type HomeProps = {
   initialSquares: (string | null)[];
 };
@@ -117,46 +116,32 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
   }, [isDarkMode]);
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        position: "relative",
-        height: "100vh",
-        width: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <div className="container">
       {isGameOver && (
-        <div style={{ marginBottom: "20px" }}>
+        <div className="message">
           <h2>{winner === "Empate" ? "Empate!" : `${winner} venceu!`}</h2>
         </div>
       )}
+
       {showOverlay && (
-        <div style={overlay}>
-          <h1
-            style={{ fontSize: "3rem", marginBottom: "30px", color: "black" }}
-          >
-            Jogo da Velha
-          </h1>
+        <div className="overlay">
+          <h1 className="title">Jogo da Velha</h1>
           {isGameOver && (
-            <div style={{ marginBottom: "20px" }}>
+            <div className="message">
               <h2>{winner === "Empate" ? "Empate!" : `${winner} venceu!`}</h2>
             </div>
           )}
           {!isGameOver && (
-            <div style={{ marginBottom: "20px" }}>
+            <div className="button-container">
               <button
                 onClick={() => handleGameModeChange("human-vs-human")}
-                style={buttonStyle}
+                className="button"
               >
                 Jogar contra outro jogador
               </button>
               <button
                 onClick={() => handleGameModeChange("human-vs-cpu")}
-                style={buttonStyle}
+                className="button"
               >
                 Jogar contra a CPU
               </button>
@@ -164,58 +149,26 @@ const Home: React.FC<HomeProps> = ({ initialSquares }) => {
           )}
 
           <div style={{ marginTop: "20px" }}>
-            <button onClick={toggleDarkMode} style={buttonStyle}>
+            <button onClick={toggleDarkMode} className="button">
               Modo {isDarkMode ? "Claro" : "Escuro"}
             </button>
           </div>
         </div>
       )}
-      <div
-        style={{
-          marginTop: "30px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+
+      <div className="board">
         <Board initialSquares={squares} onSquareClick={handleSquareClick} />
       </div>
+
       {isGameOver && (
         <div style={{ marginTop: "20px" }}>
-          <button onClick={resetGame} style={buttonStyle}>
+          <button onClick={resetGame} className="button">
             Resetar Jogo
           </button>
         </div>
       )}
     </div>
   );
-};
-
-const overlay: CSSProperties = {
-  position: "absolute",
-  top: "0",
-  left: "0",
-  width: "100%",
-  height: "100%",
-  backgroundColor: "rgba(255, 255, 255, 0.5)",
-  color: "white",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  backdropFilter: "blur(5px)",
-};
-
-const buttonStyle = {
-  backgroundColor: "#0070f3",
-  color: "#fff",
-  border: "none",
-  padding: "10px 20px",
-  margin: "5px",
-  fontSize: "1.1rem",
-  borderRadius: "5px",
-  cursor: "pointer",
-  transition: "background-color 0.3s ease",
-  width: "250px",
 };
 
 export const getStaticProps: GetStaticProps = async () => {
