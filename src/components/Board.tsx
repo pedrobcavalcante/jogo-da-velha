@@ -1,11 +1,14 @@
 import React from "react";
 
 type BoardProps = {
-  initialSquares: (string | null)[];
+  squares: (string | null)[];
   onSquareClick: (index: number) => void;
 };
 
-const Board: React.FC<BoardProps> = ({ initialSquares, onSquareClick }) => {
+const Board: React.FC<BoardProps> = React.memo(function Board({
+  squares,
+  onSquareClick,
+}) {
   return (
     <div
       style={{
@@ -14,7 +17,7 @@ const Board: React.FC<BoardProps> = ({ initialSquares, onSquareClick }) => {
         gap: "10px",
       }}
     >
-      {initialSquares.map((value, index) => (
+      {squares.map((value, index) => (
         <button
           key={index}
           style={{
@@ -32,6 +35,6 @@ const Board: React.FC<BoardProps> = ({ initialSquares, onSquareClick }) => {
       ))}
     </div>
   );
-};
+});
 
 export default Board;
